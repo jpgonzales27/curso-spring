@@ -17,4 +17,12 @@ public interface UserCrudRepository extends JpaRepository<User,Long> {
      */
     @Modifying
     void deleteByUsername(String username);
+
+    /**
+     * Si hacemos que el metodo de eliminar devuelva un entero
+     * podremos saber cuando registros han sido afectados por la eliminacion
+     * lo esperado en este caso seria uno solo
+     */
+    @Modifying
+    int deleteByUsername2(String username);
 }

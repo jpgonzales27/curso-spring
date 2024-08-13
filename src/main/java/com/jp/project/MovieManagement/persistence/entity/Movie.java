@@ -1,5 +1,6 @@
 package com.jp.project.MovieManagement.persistence.entity;
 
+import com.jp.project.MovieManagement.util.MovieGenre;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -17,8 +18,10 @@ public class Movie {
     @Column(nullable = false)
     private String director;
 
-    private String genre;
-    private int releaseDate;;
+    @Enumerated(EnumType.STRING)
+    private MovieGenre genre;
+
+    private int releaseDate;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "movie")
     List<Rating> ratings;
@@ -47,11 +50,11 @@ public class Movie {
         this.director = director;
     }
 
-    public String getGenre() {
+    public MovieGenre getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre) {
+    public void setGenre(MovieGenre genre) {
         this.genre = genre;
     }
 

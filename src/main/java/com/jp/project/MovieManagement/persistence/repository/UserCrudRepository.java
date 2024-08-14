@@ -15,8 +15,9 @@ public interface UserCrudRepository extends JpaRepository<User,Long> {
      * es decir son consultas SQL como DELETE, INSERT o UPDATE
      * y deben ser ejecutas en el contexto transaccional
      */
-    @Modifying
-    void deleteByUsername(String username);
+
+//    @Modifying
+//    void deleteByUsername(String username);
 
     /**
      * Si hacemos que el metodo de eliminar devuelva un entero
@@ -24,5 +25,5 @@ public interface UserCrudRepository extends JpaRepository<User,Long> {
      * lo esperado en este caso seria uno solo
      */
     @Modifying
-    int deleteByUsername2(String username);
+    int deleteByUsername(String username);
 }

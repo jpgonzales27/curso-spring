@@ -23,7 +23,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<Movie> findAllByTitle(String title) {
-        return movieCrudRepository.findAllTitleContaining(title);
+        return movieCrudRepository.findByTitleContaining(title);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MovieServiceImpl implements MovieService {
         Movie oldMovie = this.findOneById(id);
         oldMovie.setTitle(newMovie.getTitle());
         oldMovie.setGenre(newMovie.getGenre());
-        oldMovie.setReleaseDate(newMovie.getReleaseDate());
+        oldMovie.setReleaseYear(newMovie.getReleaseYear());
         oldMovie.setDirector(newMovie.getDirector());
 
         return movieCrudRepository.save(oldMovie);

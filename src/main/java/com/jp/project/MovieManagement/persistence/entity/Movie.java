@@ -21,7 +21,7 @@ public class Movie {
     @Enumerated(EnumType.STRING)
     private MovieGenre genre;
 
-    private int releaseDate;
+    private int releaseYear;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "movie")
     List<Rating> ratings;
@@ -58,12 +58,12 @@ public class Movie {
         this.genre = genre;
     }
 
-    public int getReleaseDate() {
-        return releaseDate;
+    public int getReleaseYear() {
+        return releaseYear;
     }
 
-    public void setReleaseDate(int releaseDate) {
-        this.releaseDate = releaseDate;
+    public void setReleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
     }
 
     public List<Rating> getRatings() {

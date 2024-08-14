@@ -4,12 +4,12 @@ import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.persistence.entity.User;
 import com.jp.project.MovieManagement.persistence.repository.UserCrudRepository;
 import com.jp.project.MovieManagement.service.UserService;
-import jakarta.persistence.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Entity
+@Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 //        User user = this.findOneByUsername(username);
 //        userCrudRepository.delete(user);
 
-        if(userCrudRepository.deleteByUsername2(username) != 1){
+        if(userCrudRepository.deleteByUsername(username) != 1){
             throw new ObjectNotFoundException("[user:" + username + "]");
         }
     }

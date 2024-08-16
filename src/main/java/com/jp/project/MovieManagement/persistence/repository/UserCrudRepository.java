@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserCrudRepository extends JpaRepository<User,Long> {
     List<User> findByNameContaining(String name);
-    User findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
     /**
      * Modifying indica a JPA que la consulta modificara la BD

@@ -1,8 +1,10 @@
 package com.jp.project.MovieManagement.controller;
 
+import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.persistence.entity.User;
 import com.jp.project.MovieManagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +18,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<User> findAllUsers(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<User>> findAllUsers(@RequestParam(required = false) String name) {
 
         List<User> users = null;
 
@@ -25,11 +27,16 @@ public class UserController {
         } else {
             users =userService.findAll();
         }
-        return users;
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{username}")
-    public User findUserById(@PathVariable String username) {
-        return userService.findOneByUsername(username);
+    public ResponseEntity<User> findUserById(@PathVariable String username) {
+        try{
+            return ResponseEntity.ok(userService.findOneByUsername(username));
+        }catch (ObjectNotFoundException exception){
+//            return ResponseEntity.status(404).build();
+            return ResponseEntity.notFound().build();
+        }
     }
 }

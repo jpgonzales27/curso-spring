@@ -4,6 +4,7 @@ import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
 import com.jp.project.MovieManagement.service.MovieService;
 import com.jp.project.MovieManagement.util.MovieGenre;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -63,5 +65,59 @@ public class MovieController {
        }catch (ObjectNotFoundException e) {
            return ResponseEntity.notFound().build();
        }
+    }
+
+    //    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Movie> createOneV1(@RequestParam String title,
+                                             @RequestParam String director,
+                                             @RequestParam MovieGenre genre,
+                                             @RequestParam int releaseYear,
+                                             HttpServletRequest request){
+
+        Movie newMovie = new Movie();
+        newMovie.setTitle(title);
+        newMovie.setDirector(director);
+        newMovie.setGenre(genre);
+        newMovie.setReleaseYear(releaseYear);
+
+        Movie movieCreated = movieService.saveOne(newMovie);
+
+        String baseUrl = request.getRequestURL().toString();
+        URI newLocation = URI.create(baseUrl + "/" + movieCreated.getId());
+
+        return ResponseEntity
+                .created(newLocation)
+                .body(movieCreated);
+    }
+
+    @PostMapping
+    public ResponseEntity<Movie> createMovie(@RequestBody Movie movie,HttpServletRequest request){
+
+        Movie movieCreated = movieService.saveOne(movie);
+
+        String baseUrl = request.getRequestURL().toString();
+        URI newLocation = URI.create(baseUrl + "/" + movieCreated.getId());
+
+        return ResponseEntity.created(newLocation).body(movie);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Movie> updateMovie(@PathVariable Long id ,@RequestBody Movie movie) {
+       try{
+           Movie updatedMovie = movieService.updateOneById(id, movie);
+           return ResponseEntity.ok(updatedMovie);
+       } catch ( ObjectNotFoundException e){
+           return ResponseEntity.notFound().build();
+       }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
+        try{
+            movieService.deleteOneById(id);
+            return ResponseEntity.noContent().build();
+        } catch ( ObjectNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 }

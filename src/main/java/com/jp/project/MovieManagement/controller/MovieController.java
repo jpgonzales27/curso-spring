@@ -98,7 +98,7 @@ public class MovieController {
         String baseUrl = request.getRequestURL().toString();
         URI newLocation = URI.create(baseUrl + "/" + movieCreated.getId());
 
-        return ResponseEntity.created(newLocation).body(movie);
+        return ResponseEntity.created(newLocation).body(movieCreated);
     }
 
     @PutMapping("/{id}")

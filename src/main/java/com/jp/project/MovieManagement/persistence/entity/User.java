@@ -1,6 +1,7 @@
 package com.jp.project.MovieManagement.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -28,6 +29,7 @@ public class User {
     private LocalDateTime createdAt;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    @JsonManagedReference("user-to-ratings")
     List<Rating> ratings;
 
     public Long getId() {

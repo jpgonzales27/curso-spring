@@ -1,5 +1,6 @@
 package com.jp.project.MovieManagement.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Check;
@@ -24,12 +25,12 @@ public class Rating {
 
     @ManyToOne
     @JoinColumn(name = "movie_id",insertable = false,updatable = false)
-    @JsonIgnore
+    @JsonBackReference("movie-to-ratings")
     private Movie movie;
 
     @ManyToOne
     @JoinColumn(name = "user_id",insertable = false,updatable = false)
-    @JsonIgnore
+    @JsonBackReference("user-to-ratings")
     private User user;
 
     public Long getId() {

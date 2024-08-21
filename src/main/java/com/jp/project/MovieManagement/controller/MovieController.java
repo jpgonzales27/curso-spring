@@ -1,5 +1,7 @@
 package com.jp.project.MovieManagement.controller;
 
+import com.jp.project.MovieManagement.dto.request.SaveMovie;
+import com.jp.project.MovieManagement.dto.response.GetMovie;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
 import com.jp.project.MovieManagement.service.MovieService;
@@ -23,10 +25,10 @@ public class MovieController {
     private MovieService movieService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Movie>> findAllMovies(@RequestParam(required = false) String title,
+    public ResponseEntity<List<GetMovie>> findAllMovies(@RequestParam(required = false) String title,
                                         @RequestParam(required = false) MovieGenre genre) {
 
-        List<Movie> movies = null;
+        List<GetMovie> movies = null;
 
         if (StringUtils.hasText(title) && genre != null) {
             movies = movieService.findAllByGenreAndTitle(genre, title);
@@ -59,7 +61,7 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Movie> findMovieById(@PathVariable Long id) {
+    public ResponseEntity<GetMovie> findMovieById(@PathVariable Long id) {
        try {
            return ResponseEntity.ok(movieService.findOneById(id));
        }catch (ObjectNotFoundException e) {
@@ -67,44 +69,21 @@ public class MovieController {
        }
     }
 
-    //    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Movie> createOneV1(@RequestParam String title,
-                                             @RequestParam String director,
-                                             @RequestParam MovieGenre genre,
-                                             @RequestParam int releaseYear,
-                                             HttpServletRequest request){
-
-        Movie newMovie = new Movie();
-        newMovie.setTitle(title);
-        newMovie.setDirector(director);
-        newMovie.setGenre(genre);
-        newMovie.setReleaseYear(releaseYear);
-
-        Movie movieCreated = movieService.saveOne(newMovie);
-
-        String baseUrl = request.getRequestURL().toString();
-        URI newLocation = URI.create(baseUrl + "/" + movieCreated.getId());
-
-        return ResponseEntity
-                .created(newLocation)
-                .body(movieCreated);
-    }
-
     @PostMapping
-    public ResponseEntity<Movie> createMovie(@RequestBody Movie movie,HttpServletRequest request){
+    public ResponseEntity<GetMovie> createMovie(@RequestBody SaveMovie movieDto, HttpServletRequest request){
 
-        Movie movieCreated = movieService.saveOne(movie);
+        GetMovie movieCreated = movieService.saveOne(movieDto);
 
         String baseUrl = request.getRequestURL().toString();
-        URI newLocation = URI.create(baseUrl + "/" + movieCreated.getId());
+        URI newLocation = URI.create(baseUrl + "/" + movieCreated.id());
 
         return ResponseEntity.created(newLocation).body(movieCreated);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable Long id ,@RequestBody Movie movie) {
+    public ResponseEntity<GetMovie> updateMovie(@PathVariable Long id ,@RequestBody SaveMovie movieDto) {
        try{
-           Movie updatedMovie = movieService.updateOneById(id, movie);
+           GetMovie updatedMovie = movieService.updateOneById(id, movieDto);
            return ResponseEntity.ok(updatedMovie);
        } catch ( ObjectNotFoundException e){
            return ResponseEntity.notFound().build();

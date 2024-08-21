@@ -28,12 +28,10 @@ public class Movie {
     private int releaseYear;
 
     @CreationTimestamp
-    @JsonFormat(pattern = "yyyy/MM/dd - HH:mm:ss")
     @Column(updatable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
     private LocalDateTime createdAt;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "movie")
-    @JsonManagedReference("movie-to-ratings")
     List<Rating> ratings;
 
     public Long getId() {

@@ -25,12 +25,10 @@ public class Rating {
 
     @ManyToOne
     @JoinColumn(name = "movie_id",insertable = false,updatable = false)
-    @JsonBackReference("movie-to-ratings")
     private Movie movie;
 
     @ManyToOne
     @JoinColumn(name = "user_id",insertable = false,updatable = false)
-    @JsonBackReference("user-to-ratings")
     private User user;
 
     public Long getId() {

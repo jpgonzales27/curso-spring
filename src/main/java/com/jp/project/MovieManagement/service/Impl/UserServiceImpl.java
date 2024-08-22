@@ -7,6 +7,7 @@ import com.jp.project.MovieManagement.mapper.UserMapper;
 import com.jp.project.MovieManagement.persistence.entity.User;
 import com.jp.project.MovieManagement.persistence.repository.UserCrudRepository;
 import com.jp.project.MovieManagement.service.UserService;
+import com.jp.project.MovieManagement.service.validator.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,12 +43,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GetUser saveOne(SaveUser userDto) {
+        PasswordValidator.validatedPassword(userDto.password(),userDto.passwordRepeated());
         User user = UserMapper.toEntity(userDto);
          return UserMapper.toGetDto(userCrudRepository.save(user));
     }
 
     @Override
     public GetUser updateOneByUsername(String username, SaveUser userDto) {
+        PasswordValidator.validatedPassword(userDto.password(),userDto.passwordRepeated());
         User oldUser = this.findOneEntityByUsername(username);
         UserMapper.updateEntity(oldUser, userDto);
         return UserMapper.toGetDto(userCrudRepository.save(oldUser));

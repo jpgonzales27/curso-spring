@@ -54,8 +54,7 @@ public class MovieServiceImpl implements MovieService {
 
     private Movie findOneEntityById(Long id) {
         return movieCrudRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Movie not found"));
-//                .orElseThrow(() -> new ObjectNotFoundException("[movie:" + Long.toString(id) + "]"));
+                .orElseThrow(() -> new ObjectNotFoundException("[movie:" + Long.toString(id) + "]"));
     }
 
     @Override

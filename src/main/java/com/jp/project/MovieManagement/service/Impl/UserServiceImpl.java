@@ -40,8 +40,7 @@ public class UserServiceImpl implements UserService {
 
     private User findOneEntityByUsername(String username) {
         return userCrudRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "User not found: " + username));
-//                .orElseThrow( () -> new ObjectNotFoundException("[user:" + username + "]"));
+                .orElseThrow( () -> new ObjectNotFoundException("[user:" + username + "]"));
     }
 
     @Override

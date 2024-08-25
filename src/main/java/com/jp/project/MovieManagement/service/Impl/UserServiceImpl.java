@@ -9,7 +9,9 @@ import com.jp.project.MovieManagement.persistence.repository.UserCrudRepository;
 import com.jp.project.MovieManagement.service.UserService;
 import com.jp.project.MovieManagement.service.validator.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -38,19 +40,20 @@ public class UserServiceImpl implements UserService {
 
     private User findOneEntityByUsername(String username) {
         return userCrudRepository.findByUsername(username)
-                .orElseThrow( () -> new ObjectNotFoundException("[user:" + username + "]"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "User not found: " + username));
+//                .orElseThrow( () -> new ObjectNotFoundException("[user:" + username + "]"));
     }
 
     @Override
     public GetUser saveOne(SaveUser userDto) {
-        PasswordValidator.validatedPassword(userDto.password(),userDto.passwordRepeated());
+        PasswordValidator.validatedPassword(userDto.password(), userDto.passwordRepeated());
         User user = UserMapper.toEntity(userDto);
-         return UserMapper.toGetDto(userCrudRepository.save(user));
+        return UserMapper.toGetDto(userCrudRepository.save(user));
     }
 
     @Override
     public GetUser updateOneByUsername(String username, SaveUser userDto) {
-        PasswordValidator.validatedPassword(userDto.password(),userDto.passwordRepeated());
+        PasswordValidator.validatedPassword(userDto.password(), userDto.passwordRepeated());
         User oldUser = this.findOneEntityByUsername(username);
         UserMapper.updateEntity(oldUser, userDto);
         return UserMapper.toGetDto(userCrudRepository.save(oldUser));
@@ -62,7 +65,7 @@ public class UserServiceImpl implements UserService {
 //        User user = this.findOneByUsername(username);
 //        userCrudRepository.delete(user);
 
-        if(userCrudRepository.deleteByUsername(username) != 1){
+        if (userCrudRepository.deleteByUsername(username) != 1) {
             throw new ObjectNotFoundException("[user:" + username + "]");
         }
     }

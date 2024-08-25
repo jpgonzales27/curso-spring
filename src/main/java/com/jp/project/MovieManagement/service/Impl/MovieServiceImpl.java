@@ -10,7 +10,9 @@ import com.jp.project.MovieManagement.service.MovieService;
 import com.jp.project.MovieManagement.util.MovieGenre;
 import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -51,7 +53,9 @@ public class MovieServiceImpl implements MovieService {
 
 
     private Movie findOneEntityById(Long id) {
-        return movieCrudRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("[movie:" + Long.toString(id) + "]"));
+        return movieCrudRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Movie not found"));
+//                .orElseThrow(() -> new ObjectNotFoundException("[movie:" + Long.toString(id) + "]"));
     }
 
     @Override

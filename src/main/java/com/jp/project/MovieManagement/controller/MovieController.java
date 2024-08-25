@@ -1,12 +1,14 @@
 package com.jp.project.MovieManagement.controller;
 
 import com.jp.project.MovieManagement.dto.request.SaveMovie;
+import com.jp.project.MovieManagement.dto.response.ApiError;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
 import com.jp.project.MovieManagement.service.MovieService;
 import com.jp.project.MovieManagement.util.MovieGenre;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +18,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @RestController
@@ -95,5 +99,25 @@ public class MovieController {
         } catch ( ObjectNotFoundException e){
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiError> handleGenericException(Exception exception,
+                                                           HttpServletRequest request,
+                                                           HttpServletResponse response){
+        int httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        ZoneId zoneId = ZoneId.of("America/La_Paz");
+        LocalDateTime timestamp = LocalDateTime.now(zoneId);
+        ApiError apiError = new ApiError(
+                httpStatus,
+                request.getRequestURL().toString(),
+                request.getMethod(),
+                "Oops! Something went wrong on our server. Please try again later.",
+                exception.getMessage(),
+                timestamp,
+                null
+        );
+
+        return ResponseEntity.status(httpStatus).body(apiError);
     }
 }

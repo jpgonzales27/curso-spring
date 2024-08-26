@@ -3,6 +3,7 @@ package com.jp.project.MovieManagement.controller;
 import com.jp.project.MovieManagement.dto.request.SaveMovie;
 import com.jp.project.MovieManagement.dto.response.ApiError;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
+import com.jp.project.MovieManagement.exception.InvalidPasswordException;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
 import com.jp.project.MovieManagement.service.MovieService;
@@ -15,7 +16,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -31,7 +36,7 @@ public class MovieController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<GetMovie>> findAllMovies(@RequestParam(required = false) String title,
-                                        @RequestParam(required = false) MovieGenre genre) {
+                                                        @RequestParam(required = false) MovieGenre genre) {
 
         List<GetMovie> movies = null;
 
@@ -49,9 +54,9 @@ public class MovieController {
          * Option 1 - Devolver el objeto y el status code
          * De esta forma tb es facil agregarle los headers en caso de necesitarlo         *
          */
-         //return new ResponseEntity<>( movies, HttpStatus.OK);
-         //HttpHeaders headers = new HttpHeaders();
-         //return new ResponseEntity(movies, headers, HttpStatus.OK);
+        //return new ResponseEntity<>( movies, HttpStatus.OK);
+        //HttpHeaders headers = new HttpHeaders();
+        //return new ResponseEntity(movies, headers, HttpStatus.OK);
 
 
         /*
@@ -71,7 +76,7 @@ public class MovieController {
     }
 
     @PostMapping
-    public ResponseEntity<GetMovie> createMovie(@Valid @RequestBody SaveMovie movieDto, HttpServletRequest request){
+    public ResponseEntity<GetMovie> createMovie(@Valid @RequestBody SaveMovie movieDto, HttpServletRequest request) {
 //        System.out.println("Fecha: " + saveDto.availabilityEndTime());
         GetMovie movieCreated = movieService.saveOne(movieDto);
 
@@ -82,42 +87,14 @@ public class MovieController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GetMovie> updateMovie(@PathVariable Long id ,@Valid @RequestBody SaveMovie movieDto) {
-       try{
-           GetMovie updatedMovie = movieService.updateOneById(id, movieDto);
-           return ResponseEntity.ok(updatedMovie);
-       } catch ( ObjectNotFoundException e){
-           return ResponseEntity.notFound().build();
-       }
+    public ResponseEntity<GetMovie> updateMovie(@PathVariable Long id, @Valid @RequestBody SaveMovie movieDto) {
+        GetMovie updatedMovie = movieService.updateOneById(id, movieDto);
+        return ResponseEntity.ok(updatedMovie);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
-        try{
-            movieService.deleteOneById(id);
-            return ResponseEntity.noContent().build();
-        } catch ( ObjectNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleGenericException(Exception exception,
-                                                           HttpServletRequest request,
-                                                           HttpServletResponse response){
-        int httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
-        ZoneId zoneId = ZoneId.of("America/La_Paz");
-        LocalDateTime timestamp = LocalDateTime.now(zoneId);
-        ApiError apiError = new ApiError(
-                httpStatus,
-                request.getRequestURL().toString(),
-                request.getMethod(),
-                "Oops! Something went wrong on our server. Please try again later.",
-                exception.getMessage(),
-                timestamp,
-                null
-        );
-
-        return ResponseEntity.status(httpStatus).body(apiError);
+        movieService.deleteOneById(id);
+        return ResponseEntity.noContent().build();
     }
 }

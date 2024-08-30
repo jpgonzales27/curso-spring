@@ -3,6 +3,7 @@ package com.jp.project.MovieManagement.persistence.specification;
 import com.jp.project.MovieManagement.dto.request.MovieSearchCriteria;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
 import com.jp.project.MovieManagement.persistence.entity.Rating;
+import com.jp.project.MovieManagement.persistence.entity.User;
 import com.jp.project.MovieManagement.util.MovieGenre;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -61,7 +62,17 @@ public class FindAllMoviesSpecification implements Specification<Movie> {
             predicates.add(averageRatingGreaterThanEqual);
         }
 
-        //
+        if(StringUtils.hasText(this.searchCriteria.username())){
+
+            Join<Movie,Rating> joinMovieRating = root.join("ratings");
+            Join<Movie, User> joinRatingUser = joinMovieRating.join("user");
+
+//            select m.* from movie m
+//                    join rating r on r.movie_id = m.id
+//                    join user u on r.user_id = u.id
+            Predicate usernameEqual = criteriaBuilder.equal(joinRatingUser.get("username"),this.searchCriteria.username());
+            predicates.add(usernameEqual);
+        }
 
         // select m.*
         // from movie m

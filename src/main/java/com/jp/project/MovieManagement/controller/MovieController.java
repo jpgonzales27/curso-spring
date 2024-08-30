@@ -36,19 +36,10 @@ public class MovieController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<GetMovie>> findAllMovies(@RequestParam(required = false) String title,
-                                                        @RequestParam(required = false) MovieGenre genre) {
+                                                        @RequestParam(required = false) MovieGenre genre,
+                                                        @RequestParam(required = false) Integer minReleaseYear) {
 
-        List<GetMovie> movies = null;
-
-        if (StringUtils.hasText(title) && genre != null) {
-            movies = movieService.findAllByGenreAndTitle(genre, title);
-        } else if (StringUtils.hasText(title)) {
-            movies = movieService.findAllByTitle(title);
-        } else if (genre != null) {
-            movies = movieService.findAllByGenre(genre);
-        } else {
-            movies = movieService.findAll();
-        }
+        List<GetMovie> movies = movieService.findAll(title,genre,minReleaseYear);
 
         /*
          * Option 1 - Devolver el objeto y el status code

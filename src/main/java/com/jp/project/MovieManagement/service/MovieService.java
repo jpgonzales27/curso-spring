@@ -9,10 +9,11 @@ import java.util.List;
 
 public interface MovieService {
 
-    List<GetMovie> findAll();
-    List<GetMovie> findAllByTitle(String title);
-    List<GetMovie> findAllByGenre(MovieGenre genre);
-    List<GetMovie> findAllByGenreAndTitle(MovieGenre genre, String title);
+    List<GetMovie> findAll(String title, MovieGenre genre, Integer minReleaseYear);
+//    List<GetMovie> findAllByTitle(String title);
+//    List<GetMovie> findAllByGenre(MovieGenre genre);
+//    List<GetMovie> findAllByGenreAndTitle(MovieGenre genre, String title);
+//    List<GetMovie> findAllByGenreAndTitleAndMinReleaseYear(MovieGenre genre, String title, Integer minReleaseYear);
 
     GetMovie findOneById(Long id);
     GetMovie saveOne (SaveMovie movieDto);

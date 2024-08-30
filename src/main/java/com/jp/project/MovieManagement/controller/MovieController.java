@@ -1,5 +1,6 @@
 package com.jp.project.MovieManagement.controller;
 
+import com.jp.project.MovieManagement.dto.request.MovieSearchCriteria;
 import com.jp.project.MovieManagement.dto.request.SaveMovie;
 import com.jp.project.MovieManagement.dto.response.ApiError;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
@@ -39,7 +40,8 @@ public class MovieController {
                                                         @RequestParam(required = false) MovieGenre genre,
                                                         @RequestParam(required = false) Integer minReleaseYear) {
 
-        List<GetMovie> movies = movieService.findAll(title,genre,minReleaseYear);
+        MovieSearchCriteria searchCriteria = new MovieSearchCriteria(title,genre,minReleaseYear);
+        List<GetMovie> movies = movieService.findAll(searchCriteria);
 
         /*
          * Option 1 - Devolver el objeto y el status code

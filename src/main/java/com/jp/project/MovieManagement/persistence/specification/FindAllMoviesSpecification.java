@@ -1,5 +1,6 @@
 package com.jp.project.MovieManagement.persistence.specification;
 
+import com.jp.project.MovieManagement.dto.request.MovieSearchCriteria;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
 import com.jp.project.MovieManagement.util.MovieGenre;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -14,14 +15,11 @@ import java.util.List;
 
 public class FindAllMoviesSpecification implements Specification<Movie> {
 
-    private String title;
-    private MovieGenre genre;
-    private Integer minReleaseYear;
+    private MovieSearchCriteria searchCriteria;
 
-    public FindAllMoviesSpecification(String title, MovieGenre genre, Integer minReleaseYear) {
-        this.title = title;
-        this.genre = genre;
-        this.minReleaseYear = minReleaseYear;
+
+    public FindAllMoviesSpecification(MovieSearchCriteria searchCriteria) {
+        this.searchCriteria = searchCriteria;
     }
 
     @Override
@@ -33,20 +31,20 @@ public class FindAllMoviesSpecification implements Specification<Movie> {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasText(this.title)){
-            Predicate titleLike = criteriaBuilder.like(root.get("title"), "%" + this.title + "%");
+        if(StringUtils.hasText(this.searchCriteria.title())){
+            Predicate titleLike = criteriaBuilder.like(root.get("title"), "%" + this.searchCriteria.title() + "%");
             //m.title like '%this.title%'
             predicates.add(titleLike);
         }
 
-        if(genre!=null){
-            Predicate genreEqual = criteriaBuilder.equal(root.get("genre"),this.genre);
+        if(this.searchCriteria.genre()!=null){
+            Predicate genreEqual = criteriaBuilder.equal(root.get("genre"),this.searchCriteria.genre());
             //m.genre = "this.genre"
             predicates.add(genreEqual);
         }
 
-        if(minReleaseYear!= null && minReleaseYear > 0){
-            Predicate releaseYearGreaterThanOrEquals = criteriaBuilder.greaterThanOrEqualTo(root.get("releaseYear"),this.minReleaseYear);
+        if(this.searchCriteria.minReleaseYear()!= null && this.searchCriteria.minReleaseYear().intValue() > 0){
+            Predicate releaseYearGreaterThanOrEquals = criteriaBuilder.greaterThanOrEqualTo(root.get("releaseYear"),this.searchCriteria.minReleaseYear());
             //m.releaseYear >= this.minReleaseYear
             predicates.add(releaseYearGreaterThanOrEquals);
         }

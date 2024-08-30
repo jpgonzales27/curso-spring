@@ -1,5 +1,6 @@
 package com.jp.project.MovieManagement.service.Impl;
 
+import com.jp.project.MovieManagement.dto.request.MovieSearchCriteria;
 import com.jp.project.MovieManagement.dto.request.SaveMovie;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
@@ -24,8 +25,8 @@ public class MovieServiceImpl implements MovieService {
     private MovieCrudRepository movieCrudRepository;
 
     @Override
-    public List<GetMovie> findAll(String title, MovieGenre genre,Integer minReleaseYear) {
-        FindAllMoviesSpecification moviesSpecification = new FindAllMoviesSpecification(title, genre,minReleaseYear);
+    public List<GetMovie> findAll(MovieSearchCriteria searchCriteria) {
+        FindAllMoviesSpecification moviesSpecification = new FindAllMoviesSpecification(searchCriteria);
         List<Movie> entities = movieCrudRepository.findAll(moviesSpecification);
         return MovieMapper.toGetDtoList(entities);
     }

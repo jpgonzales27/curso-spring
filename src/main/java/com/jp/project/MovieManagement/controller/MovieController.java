@@ -38,9 +38,11 @@ public class MovieController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<GetMovie>> findAllMovies(@RequestParam(required = false) String title,
                                                         @RequestParam(required = false) MovieGenre genre,
-                                                        @RequestParam(required = false) Integer minReleaseYear) {
+                                                        @RequestParam(required = false) Integer minReleaseYear,
+                                                        @RequestParam(required = false) Integer maxReleaseYear,
+                                                        @RequestParam(required = false) Integer minAverageRating) {
 
-        MovieSearchCriteria searchCriteria = new MovieSearchCriteria(title,genre,minReleaseYear);
+        MovieSearchCriteria searchCriteria = new MovieSearchCriteria(title,genre,minReleaseYear,maxReleaseYear,minAverageRating);
         List<GetMovie> movies = movieService.findAll(searchCriteria);
 
         /*

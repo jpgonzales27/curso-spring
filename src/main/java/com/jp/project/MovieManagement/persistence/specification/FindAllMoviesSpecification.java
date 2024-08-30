@@ -2,11 +2,9 @@ package com.jp.project.MovieManagement.persistence.specification;
 
 import com.jp.project.MovieManagement.dto.request.MovieSearchCriteria;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
+import com.jp.project.MovieManagement.persistence.entity.Rating;
 import com.jp.project.MovieManagement.util.MovieGenre;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
@@ -49,7 +47,43 @@ public class FindAllMoviesSpecification implements Specification<Movie> {
             predicates.add(releaseYearGreaterThanOrEquals);
         }
 
-        //select m.* from Movie m where 1 = 1 and m.title like '%this.title%' and m.genre = "this.genre" and m.releaseYear >= this.minReleaseYear
+        if(this.searchCriteria.maxReleaseYear()!=null && this.searchCriteria.maxReleaseYear()> 0) {
+            Predicate releaseYearLessThanOrEquals = criteriaBuilder.lessThanOrEqualTo(root.get("releaseYear"),this.searchCriteria.maxReleaseYear());
+            //m.releaseYear >= this.maxReleaseYear
+            predicates.add(releaseYearLessThanOrEquals);
+        }
+
+
+        if(this.searchCriteria.minAverageRating() != null && this.searchCriteria.minAverageRating() > 0){
+            Subquery<Double> averageRatingSubquery = getAverageRatingSubquery(root, query, criteriaBuilder);
+
+            Predicate averageRatingGreaterThanEqual = criteriaBuilder.greaterThanOrEqualTo(averageRatingSubquery, this.searchCriteria.minAverageRating().doubleValue());
+            predicates.add(averageRatingGreaterThanEqual);
+        }
+
+        //
+
+        // select m.*
+        // from movie m
+        // where 1 = 1  and
+        //              m.title like '%this.title%'
+        //              and m.genre = "this.genre"
+        //              and m.releaseYear >= this.minReleaseYear
+        //              and m.releaseYear <= this.maxReleaseYear
+        //              and (select avg(r1_0.rating)  from rating r1_0 where r1_0.movie_id = m1_0.id)
+        //                      >= searchCriteria.minAverageRating()
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+    }
+
+    private static Subquery<Double> getAverageRatingSubquery(Root<Movie> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        Subquery<Double> averageRatingSubquery = query.subquery(Double.class);//double average rating
+        Root<Rating> ratingRoot = averageRatingSubquery.from(Rating.class);//Select * from rating
+
+        averageRatingSubquery.select( criteriaBuilder.avg(ratingRoot.get("rating")) );//select avg(rating) from rating
+
+        Predicate movieIdEqual = criteriaBuilder.equal(root.get("id"), ratingRoot.get("movieId"));// where m.id = r.movie_id
+        averageRatingSubquery.where(movieIdEqual);
+
+        return averageRatingSubquery;
     }
 }

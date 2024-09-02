@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FindAllMoviesSpecification implements Specification<Movie> {
@@ -42,16 +43,23 @@ public class FindAllMoviesSpecification implements Specification<Movie> {
 //            predicates.add(genreEqual);
 //        }
 
+//        if(this.searchCriteria.genres()!=null  && this.searchCriteria.genres().length > 0){
+//
+//            List<Predicate> genrePredicates = new ArrayList<>();
+//            for (MovieGenre genre : this.searchCriteria.genres()) {
+//                Predicate genreEqual = criteriaBuilder.equal(root.get("genre"),genre);
+//                genrePredicates.add(genreEqual);
+//            }
+//
+//            Predicate genreEqual = criteriaBuilder.or(genrePredicates.toArray(new Predicate[0]));
+//            //and (m.genre = "this.genre" OR m.genre = "this.genre" OR m.genre = "this.genre" OR m.genre = "this.genre")
+//            predicates.add(genreEqual);
+//        }
+
         if(this.searchCriteria.genres()!=null  && this.searchCriteria.genres().length > 0){
 
-            List<Predicate> genrePredicates = new ArrayList<>();
-            for (MovieGenre genre : this.searchCriteria.genres()) {
-                Predicate genreEqual = criteriaBuilder.equal(root.get("genre"),genre);
-                genrePredicates.add(genreEqual);
-            }
-
-            Predicate genreEqual = criteriaBuilder.or(genrePredicates.toArray(new Predicate[0]));
-            //and (m.genre = "this.genre" OR m.genre = "this.genre" OR m.genre = "this.genre" OR m.genre = "this.genre")
+            Predicate genreEqual = criteriaBuilder.in(root.get("genre")).value(Arrays.stream(this.searchCriteria.genres()).toList());
+            //and m.genre in( "this.genre","this.genre","this.genre","this.genre")
             predicates.add(genreEqual);
         }
 

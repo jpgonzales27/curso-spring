@@ -4,7 +4,7 @@ import com.jp.project.MovieManagement.util.MovieGenre;
 
 public record MovieSearchCriteria(
     String title,
-    MovieGenre genre,
+    MovieGenre[] genres,
     Integer minReleaseYear,
     Integer maxReleaseYear,
     Integer minAverageRating,

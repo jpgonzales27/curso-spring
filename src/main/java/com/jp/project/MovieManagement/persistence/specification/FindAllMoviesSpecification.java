@@ -36,9 +36,22 @@ public class FindAllMoviesSpecification implements Specification<Movie> {
             predicates.add(titleLike);
         }
 
-        if(this.searchCriteria.genre()!=null){
-            Predicate genreEqual = criteriaBuilder.equal(root.get("genre"),this.searchCriteria.genre());
-            //m.genre = "this.genre"
+//        if(this.searchCriteria.genre()!=null){
+//            Predicate genreEqual = criteriaBuilder.equal(root.get("genre"),this.searchCriteria.genre());
+//            //m.genre = "this.genre"
+//            predicates.add(genreEqual);
+//        }
+
+        if(this.searchCriteria.genres()!=null  && this.searchCriteria.genres().length > 0){
+
+            List<Predicate> genrePredicates = new ArrayList<>();
+            for (MovieGenre genre : this.searchCriteria.genres()) {
+                Predicate genreEqual = criteriaBuilder.equal(root.get("genre"),genre);
+                genrePredicates.add(genreEqual);
+            }
+
+            Predicate genreEqual = criteriaBuilder.or(genrePredicates.toArray(new Predicate[0]));
+            //and (m.genre = "this.genre" OR m.genre = "this.genre" OR m.genre = "this.genre" OR m.genre = "this.genre")
             predicates.add(genreEqual);
         }
 

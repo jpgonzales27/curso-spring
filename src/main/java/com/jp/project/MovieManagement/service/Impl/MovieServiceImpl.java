@@ -12,6 +12,8 @@ import com.jp.project.MovieManagement.service.MovieService;
 import com.jp.project.MovieManagement.util.MovieGenre;
 import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,42 +27,16 @@ public class MovieServiceImpl implements MovieService {
     private MovieCrudRepository movieCrudRepository;
 
     @Override
-    public List<GetMovie> findAll(MovieSearchCriteria searchCriteria) {
+    public Page<GetMovie> findAll(MovieSearchCriteria searchCriteria, Pageable pageable) {
         FindAllMoviesSpecification moviesSpecification = new FindAllMoviesSpecification(searchCriteria);
-        List<Movie> entities = movieCrudRepository.findAll(moviesSpecification);
-        return MovieMapper.toGetDtoList(entities);
+        Page<Movie> entities = movieCrudRepository.findAll(moviesSpecification,pageable);
+        return entities.map(MovieMapper::toGetDto);
     }
 
-//    @Override
-//    public List<GetMovie> findAllByTitle(String title) {
-//        List<Movie> entities = movieCrudRepository.findByTitleContaining(title);
-//        return MovieMapper.toGetDtoList(entities);
-//    }
-//
-//    @Override
-//    public List<GetMovie> findAllByGenre(MovieGenre genre) {
-//        List<Movie> entities = movieCrudRepository.findByGenre(genre);
-//        return MovieMapper.toGetDtoList(entities);
-//    }
-//
-//    @Override
-//    public List<GetMovie> findAllByGenreAndTitle(MovieGenre genre, String title) {
-//        List<Movie> entities = movieCrudRepository.findByGenreAndTitleContains(genre, title);
-//        return MovieMapper.toGetDtoList(entities);
-//    }
-//
-//
-//    @Override
-//    public List<GetMovie> findAllByGenreAndTitleAndMinReleaseYear(MovieGenre genre, String title, Integer minReleaseYear) {
-//        List<Movie> entities = movieCrudRepository.findByGenreAndTitleContainingAndReleaseYearGreaterThanEqual(genre, title, minReleaseYear);
-//        return MovieMapper.toGetDtoList(entities);
-//    }
-//
     @Override
     public GetMovie findOneById(Long id) {
         return MovieMapper.toGetDto(this.findOneEntityById(id));
     }
-
 
     private Movie findOneEntityById(Long id) {
         return movieCrudRepository.findById(id)

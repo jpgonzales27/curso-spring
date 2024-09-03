@@ -13,6 +13,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,33 +40,20 @@ public class MovieController {
     private MovieService movieService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<GetMovie>> findAllMovies(@RequestParam(required = false) String title,
+    public ResponseEntity<Page<GetMovie>> findAllMovies(@RequestParam(required = false) String title,
                                                         @RequestParam(required = false) MovieGenre[] genres,
                                                         @RequestParam(required = false) Integer minReleaseYear,
                                                         @RequestParam(required = false) Integer maxReleaseYear,
                                                         @RequestParam(required = false) Integer minAverageRating,
-                                                        @RequestParam(required = false) String username) {
+                                                        @RequestParam(required = false) String username,
+                                                        @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+                                                        @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                                        @RequestParam(required = false, defaultValue = "id") String sortBy) {
 
+        Sort movieSort = Sort.by(sortBy.trim());
+        Pageable moviePageable = PageRequest.of(pageNumber,pageSize,movieSort);
         MovieSearchCriteria searchCriteria = new MovieSearchCriteria(title,genres,minReleaseYear,maxReleaseYear,minAverageRating,username);
-        List<GetMovie> movies = movieService.findAll(searchCriteria);
-
-        /*
-         * Option 1 - Devolver el objeto y el status code
-         * De esta forma tb es facil agregarle los headers en caso de necesitarlo         *
-         */
-        //return new ResponseEntity<>( movies, HttpStatus.OK);
-        //HttpHeaders headers = new HttpHeaders();
-        //return new ResponseEntity(movies, headers, HttpStatus.OK);
-
-
-        /*
-         * Option 2 - usar el formato de builder para crear nuestra respuesta
-         */
-        //return ResponseEntity.status(HttpStatus.OK).body(movies);
-
-        /*
-         * Option 3 - retornar directamente el objeto ResponseEntity
-         */
+        Page<GetMovie> movies = movieService.findAll(searchCriteria,moviePageable);
         return ResponseEntity.ok(movies);
     }
 
@@ -73,7 +64,6 @@ public class MovieController {
 
     @PostMapping
     public ResponseEntity<GetMovie> createMovie(@Valid @RequestBody SaveMovie movieDto, HttpServletRequest request) {
-//        System.out.println("Fecha: " + saveDto.availabilityEndTime());
         GetMovie movieCreated = movieService.saveOne(movieDto);
 
         String baseUrl = request.getRequestURL().toString();

@@ -5,17 +5,14 @@ import com.jp.project.MovieManagement.dto.request.SaveMovie;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
 import com.jp.project.MovieManagement.util.MovieGenre;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface MovieService {
 
-    List<GetMovie> findAll(MovieSearchCriteria searchCriteria);
-//    List<GetMovie> findAllByTitle(String title);
-//    List<GetMovie> findAllByGenre(MovieGenre genre);
-//    List<GetMovie> findAllByGenreAndTitle(MovieGenre genre, String title);
-//    List<GetMovie> findAllByGenreAndTitleAndMinReleaseYear(MovieGenre genre, String title, Integer minReleaseYear);
-
+    Page<GetMovie> findAll(MovieSearchCriteria searchCriteria,Pageable pageable);
     GetMovie findOneById(Long id);
     GetMovie saveOne (SaveMovie movieDto);
     GetMovie updateOneById(Long id, SaveMovie movieDto);

@@ -17,4 +17,5 @@ public interface MovieService {
     GetMovie saveOne (SaveMovie movieDto);
     GetMovie updateOneById(Long id, SaveMovie movieDto);
     void deleteOneById(Long id);
+    Page<GetMovie> findAllByGenre(MovieGenre genre);
 }

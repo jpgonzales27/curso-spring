@@ -13,7 +13,9 @@ import com.jp.project.MovieManagement.util.MovieGenre;
 import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -60,5 +62,16 @@ public class MovieServiceImpl implements MovieService {
     public void deleteOneById(Long id) {
         Movie movie = this.findOneEntityById(id);
         movieCrudRepository.delete(movie);
+    }
+
+    @Override
+    public Page<GetMovie> findAllByGenre(MovieGenre genre) {
+        Sort.Direction direction = Sort.Direction.fromString("DESC");
+        Sort sort = Sort.by(direction, "releaseYear").and(Sort.by(Sort.Direction.ASC, "id"));
+        Pageable pageable = PageRequest.of(0, 10, sort);
+
+        Page<Movie> entities = movieCrudRepository.findAllByGenre(MovieGenre.DRAMA, pageable);
+        return entities.map(MovieMapper::toGetDto);
+
     }
 }

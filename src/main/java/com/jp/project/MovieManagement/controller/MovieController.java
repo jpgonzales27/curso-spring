@@ -79,4 +79,9 @@ public class MovieController {
         movieService.deleteOneById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/mio/{genre}")
+    public ResponseEntity<Page<GetMovie>> findMovieByGenre(@PathVariable MovieGenre genre) {
+        return ResponseEntity.ok(movieService.findAllByGenre(genre));
+    }
 }

@@ -1,14 +1,18 @@
 package com.jp.project.MovieManagement.service.Impl;
 
 import com.jp.project.MovieManagement.dto.request.SaveUser;
+import com.jp.project.MovieManagement.dto.request.UserSearchCriteria;
 import com.jp.project.MovieManagement.dto.response.GetUser;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.mapper.UserMapper;
 import com.jp.project.MovieManagement.persistence.entity.User;
 import com.jp.project.MovieManagement.persistence.repository.UserCrudRepository;
+import com.jp.project.MovieManagement.persistence.specification.FindAllUserSpecification;
 import com.jp.project.MovieManagement.service.UserService;
 import com.jp.project.MovieManagement.service.validator.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,15 +26,10 @@ public class UserServiceImpl implements UserService {
     private UserCrudRepository userCrudRepository;
 
     @Override
-    public List<GetUser> findAll() {
-        List<User> entities = userCrudRepository.findAll();
-        return UserMapper.toGetDtoList(entities);
-    }
-
-    @Override
-    public List<GetUser> findAllByName(String name) {
-        List<User> entities = userCrudRepository.findByNameContaining(name);
-        return UserMapper.toGetDtoList(entities);
+    public Page<GetUser> findAll(UserSearchCriteria searchCriteria, Pageable pageable) {
+        FindAllUserSpecification userSpecification = new FindAllUserSpecification(searchCriteria);
+        Page<User> entities = userCrudRepository.findAll(userSpecification,pageable);
+        return entities.map(UserMapper::toGetDto);
     }
 
     @Override

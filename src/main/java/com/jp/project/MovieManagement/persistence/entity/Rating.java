@@ -7,6 +7,7 @@ import org.hibernate.annotations.Check;
 import org.hibernate.annotations.ManyToAny;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"movid_id", "user_id"}))
 public class Rating {
 
     @Id

@@ -1,5 +1,7 @@
 package com.jp.project.MovieManagement.mapper;
 
+import com.jp.project.MovieManagement.dto.request.SaveRating;
+import com.jp.project.MovieManagement.dto.response.GetCompleteRating;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
 import com.jp.project.MovieManagement.dto.response.GetUser;
 import com.jp.project.MovieManagement.persistence.entity.Rating;
@@ -50,5 +52,39 @@ public class RatingMapper {
         return entities.stream()
                 .map(RatingMapper::toGetUserRatingDto)
                 .toList();
+    }
+
+    public static GetCompleteRating toGetCompleteRatingDto(Rating entity){
+        if ( entity == null ) return null;
+
+        String movieTitle = entity.getMovie() != null ? entity.getMovie().getTitle() : null;
+        String username = entity.getUser() != null ? entity.getUser().getUsername() : null;
+
+        return new GetCompleteRating(
+                entity.getId(),
+                entity.getMovieId(),
+                movieTitle,
+                username,
+                entity.getRating()
+        );
+    }
+
+    public static Rating toEntity(SaveRating entityDto,Long userId) {
+        if ( entityDto == null ) return null;
+
+        Rating entity = new Rating();
+        entity.setMovieId(entityDto.movieId());
+        entity.setUserId(userId);
+        entity.setRating(entityDto.rating());
+
+        return entity;
+    }
+
+    public static void updateEntity(Rating entity, SaveRating dto, Long userId){
+        if ( entity == null || dto== null ) return;
+
+        entity.setUserId(userId);
+        entity.setMovieId(dto.movieId());
+        entity.setRating(dto.rating());
     }
 }

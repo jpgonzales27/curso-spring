@@ -12,7 +12,19 @@ import java.util.List;
 public interface UserService {
 
     Page<GetUser> findAll(UserSearchCriteria searchCriteria , Pageable pageable);
+    /**
+     * @param username
+     * @throws {@link net.luismarquez.projects.MovieManagement.exception.ObjectNotFoundException} if the given username do not exist
+     * @return
+     */
     GetUser findOneByUsername(String username);
+
+    /**
+     * @param username
+     * @throws {@link net.luismarquez.projects.MovieManagement.exception.ObjectNotFoundException} if the given username do not exist
+     * @return
+     */
+    User findOneEntityByUsername(String username);
     GetUser saveOne(SaveUser userDto);
     GetUser updateOneByUsername(String username, SaveUser userDto);
     void deleteOneByUsername(String username);

@@ -1,10 +1,13 @@
 package com.jp.project.MovieManagement.service.Impl;
 
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
+import com.jp.project.MovieManagement.mapper.RatingMapper;
 import com.jp.project.MovieManagement.persistence.entity.Rating;
 import com.jp.project.MovieManagement.persistence.repository.RatingCrudRepository;
 import com.jp.project.MovieManagement.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,18 +19,18 @@ public class RatingServiceImpl implements RatingService {
     private RatingCrudRepository ratingRepository;
 
     @Override
-    public List<Rating> findAll() {
-        return ratingRepository.findAll();
+    public Page<Rating> findAll(Pageable pageable) {
+        return ratingRepository.findAll(pageable);
     }
 
     @Override
-    public List<Rating> findAllByMovieId(Long movieId) {
-        return ratingRepository.findByMovieId(movieId);
+    public Page<Rating> findAllByMovieId(Long movieId, Pageable pageable) {
+        return ratingRepository.findByMovieId(movieId,pageable);
     }
 
     @Override
-    public List<Rating> findAllByUsername(String username) {
-        return ratingRepository.findByUsername(username);
+    public Page<Rating> findAllByUsername(String username, Pageable pageable) {
+        return ratingRepository.findByUsername(username,pageable);
     }
 
     @Override

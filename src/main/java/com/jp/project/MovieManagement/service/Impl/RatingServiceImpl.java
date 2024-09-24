@@ -10,6 +10,7 @@ import com.jp.project.MovieManagement.persistence.entity.User;
 import com.jp.project.MovieManagement.persistence.repository.RatingCrudRepository;
 import com.jp.project.MovieManagement.service.RatingService;
 import com.jp.project.MovieManagement.service.UserService;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,9 @@ public class RatingServiceImpl implements RatingService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     public Page<GetCompleteRating> findAll(Pageable pageable) {
@@ -53,7 +57,14 @@ public class RatingServiceImpl implements RatingService {
     public GetCompleteRating createOne(SaveRating ratingDto) {
         User userEntity = userService.findOneEntityByUsername(ratingDto.username());
         Rating rating = RatingMapper.toEntity(ratingDto, userEntity.getId());
-        return RatingMapper.toGetCompleteRatingDto(ratingRepository.save(rating));
+        System.out.println("La entidad RATING esta en el contexto de JPA: "+entityManager.contains(rating));
+        Rating ratingSaved = ratingRepository.save(rating);
+        System.out.println("La entidad RATING esta en el contexto de JPA: "+entityManager.contains(ratingSaved));
+        entityManager.detach(ratingSaved);
+        System.out.println("La entidad RATING esta en el contexto de JPA: "+entityManager.contains(ratingSaved));
+        return ratingRepository.findById(ratingSaved.getId())
+                .map(RatingMapper::toGetCompleteRatingDto)
+                .get();
     }
 
     @Override

@@ -55,14 +55,25 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public GetCompleteRating createOne(SaveRating ratingDto) {
+
+        //option 1
+        boolean ratingExits = ratingRepository.existsByMovieIdAndUserUsername(ratingDto.movieId(),ratingDto.username());
+        if(ratingExits) {
+            throw new DuplicateRatingException(ratingDto.username(),ratingDto.movieId());
+        }
+
+        //Option 2
+//        Long ratingId = ratingRepository.getRatingIdByMovieIdAndUsername(saveDto.movieId(), saveDto.username());
+//        if(ratingId != null && ratingId.longValue() > 0){
+//            return this.updateOneById(ratingId, saveDto);
+//        }
+
         User userEntity = userService.findOneEntityByUsername(ratingDto.username());
         Rating rating = RatingMapper.toEntity(ratingDto, userEntity.getId());
-        System.out.println("La entidad RATING esta en el contexto de JPA: "+entityManager.contains(rating));
-        Rating ratingSaved = ratingRepository.save(rating);
-        System.out.println("La entidad RATING esta en el contexto de JPA: "+entityManager.contains(ratingSaved));
-        entityManager.detach(ratingSaved);
-        System.out.println("La entidad RATING esta en el contexto de JPA: "+entityManager.contains(ratingSaved));
-        return ratingRepository.findById(ratingSaved.getId())
+        ratingRepository.save(rating);
+        entityManager.detach(rating);
+
+        return ratingRepository.findById(rating.getId())
                 .map(RatingMapper::toGetCompleteRatingDto)
                 .get();
     }

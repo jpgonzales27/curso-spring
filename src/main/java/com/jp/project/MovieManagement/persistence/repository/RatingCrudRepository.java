@@ -33,4 +33,7 @@ public interface RatingCrudRepository extends JpaRepository<Rating,Long> {
     Page<Rating> findByUsername(String username, Pageable pageable);
 
     boolean existsByMovieIdAndUserUsername(Long movieId, String username);
+
+    @Query("select r.id from Rating r where r.movieId = ?1 and r.user.username = ?2")
+    Long getRatingIdByMovieIdAndUsername(Long movieId, String username);
 }

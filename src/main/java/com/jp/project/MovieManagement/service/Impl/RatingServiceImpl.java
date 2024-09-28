@@ -2,6 +2,7 @@ package com.jp.project.MovieManagement.service.Impl;
 
 import com.jp.project.MovieManagement.dto.request.SaveRating;
 import com.jp.project.MovieManagement.dto.response.GetCompleteRating;
+import com.jp.project.MovieManagement.dto.response.GetMovie;
 import com.jp.project.MovieManagement.exception.DuplicateRatingException;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.mapper.RatingMapper;
@@ -35,8 +36,8 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Page<GetCompleteRating> findAllByMovieId(Long movieId, Pageable pageable) {
-        return ratingRepository.findByMovieId(movieId, pageable).map(RatingMapper::toGetCompleteRatingDto);
+    public Page<GetMovie.GetRating> findAllByMovieId(Long movieId, Pageable pageable) {
+        return ratingRepository.findByMovieId(movieId, pageable).map(RatingMapper::toGetMovieRatingDto);
     }
 
     @Override

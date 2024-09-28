@@ -10,6 +10,7 @@ public class MovieMapper {
 
     public static GetMovie toGetDto(Movie entity) {
         if(entity == null) return null;
+        int totalRatings = entity.getRatings() != null ? entity.getRatings().size() : 0;
 
         return new GetMovie(
                 entity.getId(),
@@ -17,7 +18,7 @@ public class MovieMapper {
                 entity.getDirector(),
                 entity.getGenre(),
                 entity.getReleaseYear(),
-                RatingMapper.toGetMovieRatingDtoList(entity.getRatings())
+                totalRatings
         );
     }
 

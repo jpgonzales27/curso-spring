@@ -8,6 +8,7 @@ import com.jp.project.MovieManagement.exception.InvalidPasswordException;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
 import com.jp.project.MovieManagement.service.MovieService;
+import com.jp.project.MovieManagement.service.RatingService;
 import com.jp.project.MovieManagement.util.MovieGenre;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +39,9 @@ public class MovieController {
 
     @Autowired
     private MovieService movieService;
+
+    @Autowired
+    private RatingService ratingService;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Page<GetMovie>> findAllMovies(@RequestParam(required = false) String title,
@@ -83,5 +87,10 @@ public class MovieController {
     @GetMapping("/mio/{genre}")
     public ResponseEntity<Page<GetMovie>> findMovieByGenre(@PathVariable MovieGenre genre) {
         return ResponseEntity.ok(movieService.findAllByGenre(genre));
+    }
+
+    @GetMapping("/{id}/ratings")
+    public ResponseEntity<Page<GetMovie.GetRating>> findAllRatingsForMovieById(@PathVariable Long id,Pageable pageable) {
+        return ResponseEntity.ok(ratingService.findAllByMovieId(id, pageable));
     }
 }

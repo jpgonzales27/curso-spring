@@ -3,6 +3,7 @@ package com.jp.project.MovieManagement.service.Impl;
 import com.jp.project.MovieManagement.dto.request.SaveRating;
 import com.jp.project.MovieManagement.dto.response.GetCompleteRating;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
+import com.jp.project.MovieManagement.dto.response.GetUser;
 import com.jp.project.MovieManagement.exception.DuplicateRatingException;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.mapper.RatingMapper;
@@ -41,8 +42,8 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Page<GetCompleteRating> findAllByUsername(String username, Pageable pageable) {
-        return ratingRepository.findByUsername(username, pageable).map(RatingMapper::toGetCompleteRatingDto);
+    public Page<GetUser.GetRating> findAllByUsername(String username, Pageable pageable) {
+        return ratingRepository.findByUsername(username, pageable).map(RatingMapper::toGetUserRatingDto);
     }
 
     @Override

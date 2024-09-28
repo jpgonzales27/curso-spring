@@ -2,9 +2,11 @@ package com.jp.project.MovieManagement.controller;
 
 import com.jp.project.MovieManagement.dto.request.SaveUser;
 import com.jp.project.MovieManagement.dto.request.UserSearchCriteria;
+import com.jp.project.MovieManagement.dto.response.GetMovie;
 import com.jp.project.MovieManagement.dto.response.GetUser;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.persistence.entity.User;
+import com.jp.project.MovieManagement.service.RatingService;
 import com.jp.project.MovieManagement.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -24,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RatingService ratingService;
 
     @GetMapping
     public ResponseEntity<Page<GetUser>> findAllUsers(@RequestParam(required = false) String name,
@@ -59,5 +64,10 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable String username){
         userService.deleteOneByUsername(username);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{username}/ratings")
+    public ResponseEntity<Page<GetUser.GetRating>> findAllRatingsForMovieById(@PathVariable String username, Pageable pageable) {
+        return ResponseEntity.ok(ratingService.findAllByUsername(username, pageable));
     }
 }

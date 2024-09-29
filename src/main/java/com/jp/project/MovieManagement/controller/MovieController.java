@@ -4,6 +4,7 @@ import com.jp.project.MovieManagement.dto.request.MovieSearchCriteria;
 import com.jp.project.MovieManagement.dto.request.SaveMovie;
 import com.jp.project.MovieManagement.dto.response.ApiError;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
+import com.jp.project.MovieManagement.dto.response.GetMovieDetails;
 import com.jp.project.MovieManagement.exception.InvalidPasswordException;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
@@ -58,7 +59,7 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetMovie> findMovieById(@PathVariable Long id) {
+    public ResponseEntity<GetMovieDetails> findMovieById(@PathVariable Long id) {
         return ResponseEntity.ok(movieService.findOneById(id));
     }
 

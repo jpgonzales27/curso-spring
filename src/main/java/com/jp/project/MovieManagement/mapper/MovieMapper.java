@@ -2,6 +2,7 @@ package com.jp.project.MovieManagement.mapper;
 
 import com.jp.project.MovieManagement.dto.request.SaveMovie;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
+import com.jp.project.MovieManagement.dto.response.GetMovieDetails;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
 
 import java.util.List;
@@ -49,5 +50,21 @@ public class MovieMapper {
         oldMovie.setGenre(newMovieDto.genre());
         oldMovie.setReleaseYear(newMovieDto.releaseYear());
         oldMovie.setDirector(newMovieDto.director());
+    }
+
+    public static GetMovieDetails toGetMovieDetailsDto(Movie entity,int totalRatings,double averageRating , int lowestRating , int highestRating) {
+        if(entity == null) return null;
+
+        return new GetMovieDetails(
+                entity.getId(),
+                entity.getTitle(),
+                entity.getDirector(),
+                entity.getGenre(),
+                totalRatings,
+                entity.getReleaseYear(),
+                averageRating,
+                lowestRating,
+                highestRating
+        );
     }
 }

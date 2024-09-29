@@ -3,10 +3,12 @@ package com.jp.project.MovieManagement.service.Impl;
 import com.jp.project.MovieManagement.dto.request.MovieSearchCriteria;
 import com.jp.project.MovieManagement.dto.request.SaveMovie;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
+import com.jp.project.MovieManagement.dto.response.GetMovieDetails;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.mapper.MovieMapper;
 import com.jp.project.MovieManagement.persistence.entity.Movie;
 import com.jp.project.MovieManagement.persistence.repository.MovieCrudRepository;
+import com.jp.project.MovieManagement.persistence.repository.RatingCrudRepository;
 import com.jp.project.MovieManagement.persistence.specification.FindAllMoviesSpecification;
 import com.jp.project.MovieManagement.service.MovieService;
 import com.jp.project.MovieManagement.util.MovieGenre;
@@ -28,6 +30,9 @@ public class MovieServiceImpl implements MovieService {
     @Autowired
     private MovieCrudRepository movieCrudRepository;
 
+    @Autowired
+    private RatingCrudRepository ratingCrudRepository;
+
     @Override
     public Page<GetMovie> findAll(MovieSearchCriteria searchCriteria, Pageable pageable) {
         FindAllMoviesSpecification moviesSpecification = new FindAllMoviesSpecification(searchCriteria);
@@ -36,8 +41,14 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public GetMovie findOneById(Long id) {
-        return MovieMapper.toGetDto(this.findOneEntityById(id));
+    public GetMovieDetails findOneById(Long id) {
+
+        int totalRatings = ratingCrudRepository.countByMovieId(id);
+        double averageRating = ratingCrudRepository.avgRatingByMovieId(id);
+        int lowestRating = ratingCrudRepository.minRatingByMovieId(id);
+        int highestRating = ratingCrudRepository.maxRatingByMovieId(id);
+
+        return MovieMapper.toGetMovieDetailsDto(this.findOneEntityById(id),totalRatings,averageRating,lowestRating,highestRating);
     }
 
     private Movie findOneEntityById(Long id) {

@@ -4,6 +4,7 @@ import com.jp.project.MovieManagement.dto.request.SaveUser;
 import com.jp.project.MovieManagement.dto.request.UserSearchCriteria;
 import com.jp.project.MovieManagement.dto.response.GetMovie;
 import com.jp.project.MovieManagement.dto.response.GetUser;
+import com.jp.project.MovieManagement.dto.response.GetUserDetails;
 import com.jp.project.MovieManagement.exception.ObjectNotFoundException;
 import com.jp.project.MovieManagement.persistence.entity.User;
 import com.jp.project.MovieManagement.service.RatingService;
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<GetUser> findUserById(@PathVariable String username) {
+    public ResponseEntity<GetUserDetails> findUserById(@PathVariable String username) {
         return ResponseEntity.ok(userService.findOneByUsername(username));
     }
 
